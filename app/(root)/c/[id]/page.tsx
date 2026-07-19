@@ -14,14 +14,13 @@ type ConversationPageProps = {
 const page = async({params}:ConversationPageProps) => {
     const {id} = await params;
 
-    try {
-      await getConversation(id)
-    } catch (error) {
+    const conversation = await getConversation(id);
+    if (!conversation) {
       notFound()
     }
 
     const initialMessages = await loadChatMessages(id);
-    
+
 
   return (
     <ConversationView

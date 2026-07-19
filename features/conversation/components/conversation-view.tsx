@@ -68,7 +68,7 @@ export const ConversationView = ({ conversationId, initialMessages }: Conversati
                 onSend={(text) => {
                     void sendMessage({ text });
                 }}
-                isSending={status !== "ready"}
+                isSending={status === "submitted" || status === "streaming"}
                 autoFocus
             />
         </div>

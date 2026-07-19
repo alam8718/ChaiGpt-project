@@ -62,7 +62,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: getChatModel(conversation.model),
-    system: systemPrompt,
+    system: conversation.systemPrompt ?? systemPrompt,
     messages: await convertToModelMessages(messages),
     tools: {
       tavilySearch: tavilySearch({

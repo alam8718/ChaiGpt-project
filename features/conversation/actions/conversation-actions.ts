@@ -40,11 +40,13 @@ async function assertOwnsConversation(conversationId: string, userId: string) {
  * Fetches a single conversation owned by the current user.
  *
  * @param conversationId - The conversation to load.
- * @throws {Error} When the conversation is not found.
+ * @returns The conversation, or `null` if it doesn't exist or isn't owned by the user.
  */
 export async function getConversation(conversationId: string) {
     const user = await requireUser();
-    return assertOwnsConversation(conversationId, user.id)
+    return prisma.conversation.findFirst({
+        where: { id: conversationId, userId: user.id },
+    });
 }
 
 

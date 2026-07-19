@@ -2,7 +2,7 @@
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/features/auth/action/require-user";
 import { prisma } from "@/lib/db";
-import type { MessageRole } from "@/lib/generated/prisma/client";
+import type { MessageRole, Prisma } from "@/lib/generated/prisma/client";
 
 
 /** Shape of a message record returned from the database. */
@@ -119,7 +119,10 @@ export async function listMessages(
   
     const message = await prisma.message.update({
       where: { id: messageId },
-      data: { content: trimmed },
+      data: {
+        content: trimmed,
+        parts: [{ type: "text", text: trimmed }] as Prisma.InputJsonValue,
+      },
     });
   
     revalidatePath(`/c/${existing.conversationId}`);
