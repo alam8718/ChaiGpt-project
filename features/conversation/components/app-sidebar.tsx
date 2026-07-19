@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -38,9 +39,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   useConversations,
-  useDeleteConversation,
   useUpdateConversation,
 } from "@/features/conversation/hooks/use-conversation";
+import { RenameConversationDialog } from "@/features/conversation/components/rename-conversation-dialog";
+import { DeleteConversationDialog } from "@/features/conversation/components/delete-conversation-dialog";
 import { cn } from "@/lib/utils";
 
 type Conversation = NonNullable<
@@ -160,16 +162,8 @@ function ChatItem({
   isActive: boolean;
 }) {
   const updateConversation = useUpdateConversation();
-  const deleteConversation = useDeleteConversation(
-    isActive ? conversation.id : undefined
-  );
-
-  /** Prompts the user to rename the conversation and persists the new title. */
-  function handleRename() {
-    const next = window.prompt("Rename chat", conversation.title);
-    if (!next || next.trim() === conversation.title) return;
-    updateConversation.mutate({ id: conversation.id, title: next });
-  }
+  const [renameOpen, setRenameOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   return (
     <SidebarMenuItem>
@@ -195,7 +189,7 @@ function ChatItem({
           <span className="sr-only">Chat actions</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="right" align="start">
-          <DropdownMenuItem onClick={handleRename}>
+          <DropdownMenuItem onClick={() => setRenameOpen(true)}>
             <PencilIcon />
             Rename
           </DropdownMenuItem>
@@ -213,13 +207,26 @@ function ChatItem({
           <DropdownMenuSeparator />
           <DropdownMenuItem
             variant="destructive"
-            onClick={() => deleteConversation.mutate(conversation.id)}
+            onClick={() => setDeleteOpen(true)}
           >
             <Trash2Icon />
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <RenameConversationDialog
+        open={renameOpen}
+        onOpenChange={setRenameOpen}
+        conversationId={conversation.id}
+        currentTitle={conversation.title}
+      />
+      <DeleteConversationDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        conversationId={conversation.id}
+        isActive={isActive}
+      />
     </SidebarMenuItem>
   );
 }

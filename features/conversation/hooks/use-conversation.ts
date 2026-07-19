@@ -79,13 +79,18 @@ export function useDeleteConversation(activeId?: string) {
 
     return useMutation({
         mutationFn: (id: string) => deleteConversation(id),
-        onSuccess: ({ id }) => {
+        onSuccess: ({ id, parentConversationId }) => {
             void queryClient.invalidateQueries({
                 queryKey: queryKeys.conversations.all,
             });
             queryClient.removeQueries({
                 queryKey: queryKeys.messages.byConversation(id),
             });
+            if (parentConversationId) {
+                void queryClient.invalidateQueries({
+                    queryKey: queryKeys.conversations.branches(parentConversationId),
+                });
+            }
 
             if (activeId === id) {
                 router.push("/");

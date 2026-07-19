@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { ChatEmpty } from './chat-empty';
 import { ChatMessages } from './chat-messages';
 import { ChatComposer } from './chat-composer';
+import { BranchNav } from './branch-nav';
 
 type ConversationViewProps = {
     conversationId: string;
@@ -56,12 +57,19 @@ export const ConversationView = ({ conversationId, initialMessages }: Conversati
                 <SidebarTrigger />
                 <Separator orientation="vertical" className="mx-1 h-4" />
                 <h1 className="truncate text-sm font-medium">{title}</h1>
+                <div className="ml-auto">
+                    <BranchNav conversationId={conversationId} />
+                </div>
             </header>
 
             {messages.length === 0 ? (
                 <ChatEmpty />
             ) : (
-                <ChatMessages messages={messages} status={status} />
+                <ChatMessages
+                    conversationId={conversationId}
+                    messages={messages}
+                    status={status}
+                />
             )}
 
             <ChatComposer

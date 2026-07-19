@@ -21,7 +21,7 @@ export type ConversationListItem = {
  *
  * @throws {Error} When the conversation is not found or not owned by the user.
  */
-async function assertOwnsConversation(conversationId: string, userId: string) {
+export async function assertOwnsConversation(conversationId: string, userId: string) {
     const conversation = await prisma.conversation.findFirst({
         where: {
             id: conversationId,
@@ -125,12 +125,12 @@ export async function updateConversation(
  */
 export async function deleteConversation(conversationId: string) {
     const user = await requireUser();
-    await assertOwnsConversation(conversationId, user.id);
+    const conversation = await assertOwnsConversation(conversationId, user.id);
 
     await prisma.conversation.delete({
         where: { id: conversationId },
     });
 
     revalidatePath("/");
-    return { id: conversationId };
+    return { id: conversationId, parentConversationId: conversation.parentConversationId };
 }

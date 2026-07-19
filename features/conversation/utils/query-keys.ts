@@ -3,6 +3,7 @@ export const queryKeys = {
     conversations: {
       all: ["conversations"] as const,
       detail: (id: string) => ["conversations", id] as const,
+      branches: (id: string) => ["conversations", id, "branches"] as const,
     },
     messages: {
       byConversation: (conversationId: string) =>

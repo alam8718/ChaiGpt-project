@@ -37,12 +37,19 @@ model Conversation {
   updatedAt     DateTime @updatedAt
   lastMessageAt DateTime @default(now())
 
+  parentConversationId String? // set when this conversation is a branch
+  branchPointMessageId  String? // id of the message in the parent it forked from
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  parent   Conversation?  @relation("ConversationBranches", fields: [parentConversationId], references: [id], onDelete: SetNull)
+  branches Conversation[] @relation("ConversationBranches")
 
   messages Message[]
 
   @@index([userId, lastMessageAt(sort: Desc)])
   @@index([userId, isPinned, lastMessageAt(sort: Desc)])
+  @@index([parentConversationId])
 }
 
 enum MessageRole {

@@ -691,7 +691,9 @@ export const ConversationScalarFieldEnum = {
   isArchived: 'isArchived',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  lastMessageAt: 'lastMessageAt'
+  lastMessageAt: 'lastMessageAt',
+  parentConversationId: 'parentConversationId',
+  branchPointMessageId: 'branchPointMessageId'
 } as const
 
 export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
