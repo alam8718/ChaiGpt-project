@@ -67,6 +67,18 @@ export async function saveChatMessages(
   for (const message of messages) {
     if (message.role === "system") continue;
 
+    const existing = await prisma.message.findUnique({
+      where: { id: message.id },
+      select: { conversationId: true },
+    });
+
+    if (existing && existing.conversationId !== conversationId) {
+      console.error(
+        `saveChatMessages: skipping message ${message.id} — it belongs to conversation ${existing.conversationId}, not the target conversation ${conversationId}`
+      );
+      continue;
+    }
+
     const content = getMessageText(message);
     const role = message.role === "assistant" ? "ASSISTANT" : "USER";
 
